@@ -1,111 +1,142 @@
-var path = require('path')
-var webpack = require('webpack')
+const path = require('path');
+const webpack = require('webpack');
 
-module.exports = {
-  entry: './src/main.js',
-  output: {
-    path: path.resolve(__dirname, './dist'),
-    publicPath: '/dist/',
-    filename: 'build.js'
-  },
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: [
-          'vue-style-loader',
-          'css-loader'
-        ],
-      },{{#sass}}
-      {
-        test: /\.scss$/,
-        use: [
-          'vue-style-loader',
-          'css-loader',
-          'sass-loader'
-        ],
-      },
-      {
-        test: /\.sass$/,
-        use: [
-          'vue-style-loader',
-          'css-loader',
-          'sass-loader?indentedSyntax'
-        ],
-      },
-      {{/sass}}
-      {
-        test: /\.vue$/,
-        loader: 'vue-loader',
-        options: {
-          loaders: {
-            {{#sass}}
-            // Since sass-loader (weirdly) has SCSS as its default parse mode, we map
-            // the "scss" and "sass" values for the lang attribute to the right configs here.
-            // other preprocessors should work out of the box, no loader config like this necessary.
-            'scss': [
-              'vue-style-loader',
-              'css-loader',
-              'sass-loader'
-            ],
-            'sass': [
-              'vue-style-loader',
-              'css-loader',
-              'sass-loader?indentedSyntax'
+//const ExtractTextPlugin = require("extract-text-webpack-plugin");
+//const CleanCSSPlugin    = require("less-plugin-clean-css");
+//const UglifyJSPlugin    = require('uglifyjs-webpack-plugin');
+
+
+
+module.exports = function(env, args){
+
+    const IS_PRODUCTION = (env==="prod");
+
+    
+
+    var config = {
+
+        entry: {
+            app : './src/main.js',
+
+            vue : [
+                'vue',
+                'vuex',
+                'vue-router',
+                'vue-resource',
             ]
-            {{/sass}}
-          }
-          // other vue-loader options go here
-        }
-      },
-      {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        exclude: /node_modules/
-      },
-      {
-        test: /\.(png|jpg|gif|svg)$/,
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]?[hash]'
-        }
-      }
-    ]
-  },
-  resolve: {
-    alias: {
-      'vue$': 'vue/dist/vue.esm.js'
-    },
-    extensions: ['*', '.js', '.vue', '.json']
-  },
-  devServer: {
-    historyApiFallback: true,
-    noInfo: true,
-    overlay: true
-  },
-  performance: {
-    hints: false
-  },
-  devtool: '#eval-source-map'
-}
 
-if (process.env.NODE_ENV === 'production') {
-  module.exports.devtool = '#source-map'
-  // http://vue-loader.vuejs.org/en/workflow/production.html
-  module.exports.plugins = (module.exports.plugins || []).concat([
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      }
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false
-      }
-    }),
-    new webpack.LoaderOptionsPlugin({
-      minimize: true
-    })
-  ])
+//            vendors : [
+//                'jquery',
+//                'lodash/core'
+//            ]
+        },
+
+        output: {
+            path: path.resolve(__dirname, './dist'),
+            publicPath: 'dist/',
+            filename: 'js/[name].js',
+            chunkFilename: 'js/[name].js',
+            jsonpFunction : "_mjp_"
+        },
+
+        plugins: [
+            new webpack.optimize.CommonsChunkPlugin({
+                    // The order of this array matters
+                    names: ["vendors", "vue" ],
+                    minChunks: 2
+            })
+        ],
+
+
+        module: {
+            rules: [
+
+                // VUE
+                {
+                    test: /\.vue$/,
+                    loader: 'vue-loader',
+                    options: {
+                        loaders: {
+                        }
+                        // other vue-loader options go here
+                    }
+                },
+
+                {{#less}}
+                // LESS
+                {
+                    test: /\.less$/,
+                    use: [{
+                            loader: "style-loader" // creates style nodes from JS strings
+                        }, {
+                            loader: "css-loader" // translates CSS into CommonJS
+                        }, {
+                            loader: "less-loader" // compiles Less to CSS
+                        }]
+                },
+                {{/less}}
+
+                
+                // FileLoader for Fonts
+                {
+                    test: /\.(woff|woff2|eot|ttf|otf|svg)$/,
+                    loader: 'file-loader'
+                }
+
+            ]
+        },
+
+        resolve: {
+            extensions: ['.js', '.vue', '.json'],
+            alias: {
+                "~" : path.resolve(__dirname, 'src/'),
+                "@" : path.resolve(__dirname, 'src/')
+            }
+      },
+
+
+        devServer: {
+            historyApiFallback: true,
+            noInfo: true,
+            overlay: {
+                warnings: true,
+                errors: true
+            }
+
+        },
+
+
+        performance: {
+            hints: false
+        },
+
+
+        devtool: '#eval-source-map'
+    }
+
+
+    if(IS_PRODUCTION){
+
+        config.devtool = '#source-map';
+
+        config.plugins = (config.plugins || []).concat([
+
+            // Uglify JS
+            new webpack.optimize.UglifyJsPlugin({
+                sourceMap: false,
+                compress: {
+                    drop_console: true,
+                    warnings: false,
+                    drop_debugger: true
+                }
+            }),
+
+//            new webpack.LoaderOptionsPlugin({
+//                minimize: true
+//            })
+        ]);
+    };
+
+
+    return config;
 }

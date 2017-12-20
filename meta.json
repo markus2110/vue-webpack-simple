@@ -20,11 +20,26 @@
       "label": "License",
       "default": "MIT"
     },
-    "sass": {
+    
+    "less": {
        "type": "confirm",
-       "message": "Use sass?",
+       "message": "Use less?",
+       "default": true
+    },    
+    
+    "bootstrap": {
+       "type": "confirm",
+       "message": "install Bootstrap?",
+       "default": false
+    },    
+    
+    "fontawesome": {
+       "type": "confirm",
+       "message": "install Font-Awesome?",
        "default": false
     }
+    
+
   },
   "completeMessage": "{{#inPlace}}To get started:\n\n  npm install\n  npm run dev{{else}}To get started:\n\n  cd {{destDirName}}\n  npm install\n  npm run dev{{/inPlace}}"
 }

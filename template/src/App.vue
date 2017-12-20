@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
     <h1>\{{ msg }}</h1>
     <h2>Essential Links</h2>
     <ul>
@@ -30,7 +29,7 @@ export default {
 }
 </script>
 
-<style{{#sass}} lang="scss"{{/sass}}>
+<style{{#less}} lang="less"{{/less}}>
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
