@@ -1,15 +1,15 @@
 <template>
     <div id="page1">
-        <h1>{{ msg }}</h1>
+        <h3>Demo Store Data</h3>
+        <demo-data />
     </div>
 </template>
 
 <script>
+    import DemoDataComponent    from "@/components/DemoData/table.vue";
     export default {
-        data() {
-            return {
-                msg: 'This is the page1'
-            };
+        components: {
+            demoData:       DemoDataComponent
         }
     }
 </script>

@@ -1,7 +1,14 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+import Vue from 'vue';
+import Vuex from 'vuex';
+import DemoModule from "./DemoModule/";
 
 
+Vue.use(Vuex);
+
+
+export default new Vuex.Store({
+    strict: true,
+    modules : {
+        demo: DemoModule
+    }
+});

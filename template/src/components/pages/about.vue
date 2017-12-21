@@ -1,15 +1,9 @@
 <template>
     <div id="aboutpage">
-        <h1>{{ msg }}</h1>
+        <h3>About Page</h3>
     </div>
 </template>
 
 <script>
-    export default {
-        data() {
-            return {
-                msg: 'This is the "About" page'
-            };
-        }
-    }
+    export default {}
 </script>
