@@ -1,8 +1,12 @@
 import Vue      from "vue";
-import App  from "@/App.vue";
+import MainView  from "@/components/views/Main.vue";
+
+
 
 
 new Vue({
     el: '#application-wrapper',
-    render: (createElement) => createElement(App)
+
+    // h => alias for createElement
+    render: (h) => h(MainView)
 });
