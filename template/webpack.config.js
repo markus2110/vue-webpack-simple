@@ -1,10 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-
-//const ExtractTextPlugin = require("extract-text-webpack-plugin");
-//const CleanCSSPlugin    = require("less-plugin-clean-css");
-//const UglifyJSPlugin    = require('uglifyjs-webpack-plugin');
-
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 
 module.exports = function(env, args){
@@ -15,6 +11,8 @@ module.exports = function(env, args){
 
     var config = {
 
+        mode: 'development',
+
         entry: {
             app : './src/main.js',
 
@@ -24,11 +22,6 @@ module.exports = function(env, args){
                 'vue-router',
                 'vue-resource',
             ]
-
-//            vendors : [
-//                'jquery',
-//                'lodash/core'
-//            ]
         },
 
         output: {
@@ -40,11 +33,7 @@ module.exports = function(env, args){
         },
 
         plugins: [
-            new webpack.optimize.CommonsChunkPlugin({
-                    // The order of this array matters
-                    names: ["vendors", "vue" ],
-                    minChunks: 2
-            })
+            new VueLoaderPlugin()
         ],
 
 
@@ -79,9 +68,22 @@ module.exports = function(env, args){
                 
                 // FileLoader for Fonts
                 {
-                    test: /\.(woff|woff2|eot|ttf|otf|svg)$/,
-                    loader: 'file-loader'
-                }
+                    test: /\.(woff|woff2|eot|ttf|otf|svg|png|jpg|gif)$/,
+                    loader: 'file-loader',
+                    options: {
+                        name: '[name].[ext]?[hash]'
+                    }                    
+                },
+
+                // this will apply to both plain `.css` files
+                // AND `<style>` blocks in `.vue` files                
+                {
+                    test: /\.css$/,
+                    use: [
+                      'vue-style-loader',
+                      'css-loader'
+                    ]
+                }                
 
             ]
         },
@@ -97,14 +99,14 @@ module.exports = function(env, args){
 
         devServer: {
             historyApiFallback: true,
-            noInfo: true,
-            overlay: {
-                warnings: true,
-                errors: true
-            }
-
+            noInfo: false,
+            overlay: true
         },
 
+        watchOptions: {
+            aggregateTimeout: 300,
+            poll: 1000
+        },          
 
         performance: {
             hints: false
@@ -116,25 +118,8 @@ module.exports = function(env, args){
 
 
     if(IS_PRODUCTION){
-
-        config.devtool = '#source-map';
-
-        config.plugins = (config.plugins || []).concat([
-
-            // Uglify JS
-            new webpack.optimize.UglifyJsPlugin({
-                sourceMap: false,
-                compress: {
-                    drop_console: true,
-                    warnings: false,
-                    drop_debugger: true
-                }
-            }),
-
-//            new webpack.LoaderOptionsPlugin({
-//                minimize: true
-//            })
-        ]);
+        config.mode =       'production';
+        config.devtool =    '#source-map';
     };
 
 
